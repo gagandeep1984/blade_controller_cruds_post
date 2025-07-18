@@ -5,8 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Database\Factories\PostFactory;
 use Database\Seeders\PostSeeder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class PostController extends Controller
 {
@@ -27,11 +32,26 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $posts = Post::all();
-        // return view('posts.index');
-        return view('posts.index', compact('posts'));
+
+        // dump(auth()->guard('web')->check());
+        // dump(Auth::guard('web')->());
+
+        // if (Auth::guard('web')->check()) {
+        //     // return view('posts.index');
+        //     return view('posts.index', compact('posts'));
+        // } else {
+        //     return $posts;
+        // }
+
+
+        if ($request->is('api/*')) {
+            return $posts;
+        } else {
+            return view('posts.index', compact('posts'));
+        }
     }
 
     /**
@@ -39,7 +59,7 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(): View
     {
         return view('posts.create');
     }
@@ -58,14 +78,23 @@ class PostController extends Controller
 
         $request->validate([
             'title' => 'required|max:500',
-            'description' => 'max:2000'
+            'description' => 'required|max:2000',
+            'image' => 'required|file|mimes:jpeg,jpg,png|max:2048'
         ]);
 
+        $input = $request->all();
+        // dd($input);
+
+        // Saving image
+        if ($image = $request->file('image')) {
+            $value = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $input['image'] = $value;
+        }
+
         //Post::create(['title' => $request->title, 'description' => $request->description]);
-        Post::create($request->all());
+        Post::create($input);
 
         // dump($request);
-        // return view('posts.index');
         return redirect()->route('posts.index')->with('success', 'Post created successfully');
     }
 
@@ -75,9 +104,10 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post)
+    public function show(Post $post): View
     {
-        //
+        // return $post;
+        return view('posts.show', compact('post'));
     }
 
     /**
