@@ -95,7 +95,7 @@ class PostController extends Controller
             $input['image'] = $value;
         }
 
-        
+
         //Post::create(['title' => $request->title, 'description' => $request->description]);
         Post::create($input);
 
