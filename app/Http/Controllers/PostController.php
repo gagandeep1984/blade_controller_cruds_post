@@ -86,11 +86,16 @@ class PostController extends Controller
         // dd($input);
 
         // Saving image
-        if ($image = $request->file('image')) {
-            $value = date('YmdHis') . "." . $image->getClientOriginalExtension();
+        if ($imageFile = $request->file('image')) {
+            $dirPath = "images/";
+            // extract file name with extension for saving filename only in database 
+            $value = date('YmdHis') . "_" . $imageFile->getFilename() . "." . $imageFile->getClientOriginalExtension();
+            $imageFile->move($dirPath, $value); // move file with a new name and later saving that file name only in database  
+
             $input['image'] = $value;
         }
 
+        
         //Post::create(['title' => $request->title, 'description' => $request->description]);
         Post::create($input);
 

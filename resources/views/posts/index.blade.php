@@ -12,11 +12,16 @@ Listing
                         <div class="card">
                                 <div class="card-header">
                                         <h5 class="card-title" style="text-overflow:ellipsis; overflow:hidden; white-space: nowrap;">{{ $post->title }}</h5>
-                                        <!-- <h5 class="card-title">Post_Title</h5> -->
                                 </div>
                                 <div class="card-body">
-                                        <p class="card-text" style="max-height: 5rem; overflow: hidden; text-align: justify;">{{ $post->description }}</p>
-                                        <!-- <p class="card-text">Post_Body</p> -->
+                                        <div style="display:flex;">
+                                                @if( file_exists(public_path("/images/" . $post->image )) )
+                                                <img src="/images/{{$post->image}}" width="200" height="100" alt="{{$post->title}}" />
+                                                @else
+                                                <img src="https://placehold.co/200x100?text=No+Image" />
+                                                @endif
+                                                <p class="card-text" style="padding-left: 10px; max-height: 5rem; overflow: hidden; text-align: justify;">{{ $post->description }}</p>
+                                        </div>
                                 </div>
                                 <div class="card-footer">
                                         <div class="row">
